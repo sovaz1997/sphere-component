@@ -59,8 +59,6 @@ export default class Sphere {
     this.app.stage.addChild(this.drawContainer);
 
     this.el.append(this.app.view);
-
-
     this.appendPoints();
 
     this.app.ticker.add(() => {
@@ -69,17 +67,28 @@ export default class Sphere {
     });
   }
 
-  getCircle(position) {
+  getCircle(position, data) {
     const gfx = new PIXI.Graphics();
     gfx.interactive = true;
-    gfx.beginFill(0xFF0000);
-    gfx.lineStyle(0);
+
+
+    let alpha = Number(data.filled);
+
+    if (!alpha) alpha += 0.001;
+
+    gfx.beginFill(0xFF0000, alpha);
+    gfx.lineStyle({ width: 1, color: 0xFF0000 });
+
     const coords = this.getCoords(position);
-    gfx.drawCircle(0, 0, 3);
+    gfx.drawCircle(0, 0, this.pointRadius);
     gfx.endFill();
 
     gfx.x = coords.x;
     gfx.y = coords.y;
+
+    gfx.on('mousedown', () => {
+      console.log(data);
+    });
 
     return gfx;
   }
