@@ -3,6 +3,7 @@ import * as PIXI from 'pixi.js';
 export default class Sphere {
   state = {
     points: [],
+    rotation: true,
   };
 
   constructor(data, size = 300, pointRadius = 3, pointCount = 20) {
@@ -11,6 +12,7 @@ export default class Sphere {
     this.data = Sphere.normalizeData(data, pointCount);
 
     this.createElement();
+    this.addEventListeners();
   }
 
   render() {
@@ -44,6 +46,7 @@ export default class Sphere {
 
   createElement() {
     this.el = document.createElement('div');
+    this.el.classList.add('sphere');
 
     this.app = new PIXI.Application({
       width: this.size,
@@ -88,7 +91,7 @@ export default class Sphere {
         radius: ((i + 1) / this.data.length) * this.getDrawRadius(),
       };
 
-      const speed = Math.random() * 0.1 - 0.05;
+      const speed = Math.random() * 0.02 - 0.01;
       this.appendPoint(position, speed, this.data[i]);
     }
   }
@@ -105,12 +108,24 @@ export default class Sphere {
   }
 
   movePoints() {
+    if (!this.state.rotation) return;
+
     this.state.points.forEach((point) => {
       const { position, circle, speed } = point;
       position.angle += speed;
       const coords = this.getCoords(position);
       circle.x = coords.x;
       circle.y = coords.y;
+    });
+  }
+
+  addEventListeners() {
+    this.el.addEventListener('mouseover', () => {
+      this.state.rotation = false;
+    });
+
+    this.el.addEventListener('mouseleave', () => {
+      this.state.rotation = true;
     });
   }
 }
