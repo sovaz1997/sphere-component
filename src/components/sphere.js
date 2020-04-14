@@ -4,6 +4,7 @@ export default class Sphere {
   state = {
     points: [],
     rotation: true,
+    showText: false,
   };
 
   constructor(data, size = 300, pointRadius = 3, pointCount = 20) {
@@ -86,11 +87,41 @@ export default class Sphere {
     gfx.x = coords.x;
     gfx.y = coords.y;
 
-    gfx.on('mousedown', () => {
+    gfx.on('click', () => {
       window.open(data.link, '_blank');
     });
 
+    gfx.on('mouseover', (e) => {
+      this.addText(data.title, e.target.x + 10, e.target.y + 10);
+    });
+
+    gfx.on('mouseout', () => {
+      this.removeText();
+    });
+
     return gfx;
+  }
+
+  addText(text, x, y) {
+    if (this.state.showText) return;
+
+    this.state.showText = true;
+    this.text = new PIXI.Text(
+      text,
+      {
+        fontFamily: 'Arial', fontSize: 18, fill: 0x0, align: 'center',
+      },
+    );
+
+    this.text.x = x;
+    this.text.y = y;
+
+    this.app.stage.addChild(this.text);
+  }
+
+  removeText() {
+    this.state.showText = false;
+    this.app.stage.removeChild(this.text);
   }
 
   appendPoints() {
