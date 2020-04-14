@@ -11,8 +11,6 @@ export default class Sphere {
     this.data = Sphere.normalizeData(data, pointCount);
 
     this.createElement();
-    this.appendPoints();
-    this.render();
   }
 
   render() {
@@ -59,9 +57,12 @@ export default class Sphere {
 
     this.el.append(this.app.view);
 
+
+    this.appendPoints();
+
     this.app.ticker.add(() => {
-      // this.render();
-      // this.movePoints();
+      this.render();
+      this.movePoints();
     });
   }
 
@@ -94,7 +95,7 @@ export default class Sphere {
 
   appendPoint(position, speed, data) {
     const circle = this.getCircle(position, data);
-
+    this.app.stage.addChild(circle);
     this.state.points.push({
       position,
       speed,
@@ -104,8 +105,12 @@ export default class Sphere {
   }
 
   movePoints() {
-    for (let i = 0; i < this.state.points; i += 1) {
-      this.data[i].position.angle += this.data[i].speed;
-    }
+    this.state.points.forEach((point) => {
+      const { position, circle, speed } = point;
+      position.angle += speed;
+      const coords = this.getCoords(position);
+      circle.x = coords.x;
+      circle.y = coords.y;
+    });
   }
 }
