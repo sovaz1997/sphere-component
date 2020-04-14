@@ -16,12 +16,10 @@ export default class Sphere {
   }
 
   render() {
-    this.state.points.forEach((point) => {
-      const position = this.getCoords(point.position);
+    this.movePoints();
 
-      this.drawContainer.beginFill(0xDE3249, 1);
-      this.drawContainer.drawCircle(position.x, position.y, 5);
-      this.drawContainer.endFill();
+    this.state.points.forEach((point) => {
+      this.app.stage.addChild(point.circle);
     });
   }
 
@@ -56,10 +54,30 @@ export default class Sphere {
       antialias: true,
     });
 
-    this.drawContainer = new PIXI.Graphics();
+    this.drawContainer = new PIXI.Container();
     this.app.stage.addChild(this.drawContainer);
 
     this.el.append(this.app.view);
+
+    this.app.ticker.add(() => {
+      // this.render();
+      // this.movePoints();
+    });
+  }
+
+  getCircle(position) {
+    const gfx = new PIXI.Graphics();
+    gfx.interactive = true;
+    gfx.beginFill(0xFF0000);
+    gfx.lineStyle(0);
+    const coords = this.getCoords(position);
+    gfx.drawCircle(0, 0, 3);
+    gfx.endFill();
+
+    gfx.x = coords.x;
+    gfx.y = coords.y;
+
+    return gfx;
   }
 
   appendPoints() {
@@ -70,17 +88,23 @@ export default class Sphere {
       };
 
       const speed = Math.random() * 0.1 - 0.05;
-
       this.appendPoint(position, speed, this.data[i]);
     }
   }
 
   appendPoint(position, speed, data) {
-    this.state.points.push({ position, speed, data });
+    const circle = this.getCircle(position, data);
+
+    this.state.points.push({
+      position,
+      speed,
+      data,
+      circle,
+    });
   }
 
   movePoints() {
-    for (let i = 0; i < this.data.length; i += 1) {
+    for (let i = 0; i < this.state.points; i += 1) {
       this.data[i].position.angle += this.data[i].speed;
     }
   }
