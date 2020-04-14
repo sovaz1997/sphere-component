@@ -87,7 +87,7 @@ export default class Sphere {
     gfx.y = coords.y;
 
     gfx.on('mousedown', () => {
-      console.log(data);
+      window.open(data.link, '_blank');
     });
 
     return gfx;
